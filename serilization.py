@@ -1,5 +1,7 @@
 from datasets import load_dataset
 import argparse
+import os
+
 """
 The code serializes the dataset into a specific format comprising of two columns:
 
@@ -13,30 +15,30 @@ def get_args():
     parser.add_argument(
         'dataset_name',
         type=str,
-        help='Name of the dataset to modify'
+        help='Specify the name of the dataset that you want to modify.'
     )
     parser.add_argument(
         'subset_name',
         type=str,
         default=None,
-        help='Name of the subset if needed'
+        help='Enter the subset name, if applicable, within the dataset.'
     )
     parser.add_argument(
         'text_column',
         type=str,
         default='text',
-        help='Name of the text column'
+        help='Define the column name that contains the raw text.'
     )
     parser.add_argument(
         'cache_dir',
         type=str,
         default=None,
-        help='Cache path where the dataset is going to be cached.'
+        help='Provide the cache directory path for storing the dataset.'
     )
     parser.add_argument(
         'save_path',
         type=str,
-        help='The path of the dataset to be saved'
+        help='Indicate the file path where the processed dataset will be saved.'
     )
 
     # Parse the command-line arguments
@@ -69,6 +71,8 @@ def main():
 
     args = get_args()
 
+    ext = os.path.splitext(args.dataset_name)[-1][1:]
+
     if ext in ['json','csv','text']:
         ds = load_dataset(ext,
                           args.subset,
@@ -90,7 +94,7 @@ def main():
     # Save the dataset into jsonl
     ds.to_json(args.save_path,
                 lines=True,
-                force_ascii)
+                force_ascii=False)
 
 
 if __name__ == "__main__":
