@@ -69,7 +69,7 @@ def main():
 
     args = get_args()
 
-    if ext in ['json','csv','text']
+    if ext in ['json','csv','text']:
         ds = load_dataset(ext,
                           args.subset,
                           data_files=[args.dataset_name],
