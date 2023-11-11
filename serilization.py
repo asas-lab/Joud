@@ -13,30 +13,30 @@ def get_args():
     parser = argparse.ArgumentParser(description='Serialize metadata into a dataset.')
 
     parser.add_argument(
-        'dataset_name',
+        '--dataset_name',
         type=str,
         help='Specify the name of the dataset that you want to modify.'
     )
     parser.add_argument(
-        'subset_name',
+        '--subset_name',
         type=str,
         default=None,
         help='Enter the subset name, if applicable, within the dataset.'
     )
     parser.add_argument(
-        'text_column',
+        '--text_column',
         type=str,
         default='text',
         help='Define the column name that contains the raw text.'
     )
     parser.add_argument(
-        'cache_dir',
+        '--cache_dir',
         type=str,
         default=None,
         help='Provide the cache directory path for storing the dataset.'
     )
     parser.add_argument(
-        'save_path',
+        '--save_path',
         type=str,
         help='Indicate the file path where the processed dataset will be saved.'
     )
@@ -45,7 +45,7 @@ def get_args():
     args = parser.parse_args()
     return args
 
-def serilization(ex):
+def serilization(ex,meta_col, ds_name, subset_name):
     """
 
     This function orgnize the columns of the datset to specific formats. it keeps the text_column
@@ -59,10 +59,11 @@ def serilization(ex):
         dict: The same input dictionary 'ex' after adding the 'meta' column.
     """
 
-    meta_col = set(ds['train'].column_names) - set(config.text_column)
     meta = {i: ex[i] for i in meta_col}
     ex['meta'] = meta
     ex['meta']['dataset_name'] = ds_name
+    if subset_name != None:
+        ex['meta']['subset_name'] = subset_name
 
     return ex
 
@@ -75,21 +76,31 @@ def main():
 
     if ext in ['json','csv','text']:
         ds = load_dataset(ext,
-                          args.subset,
+                          args.subset_name,
                           data_files=[args.dataset_name],
                           cache_dir=args.cache_dir)
-
+        ds_name = os.path.splitext(args.dataset_name)[-2]
+        subset_name = args.subset_name
     else:
         ds = load_dataset(args.dataset_name,
-                          args.subset,
+                          args.subset_name,
                           cache_dir=args.cache_dir)
+        ds_name = args.dataset_name.split('/')[-1]
+        subset_name = args.subset_name
+
+    column_names = ds['train'].column_names
+    meta_columns = set(column_names) - set([args.text_column])
 
     # Call the serilization function with the input dictionary and the loaded dataset
-    ds = ds.map(serilization)
+    ds = ds.map(lambda ex: serilization(ex,meta_columns, ds_name, subset_name),
+    remove_columns=meta_columns)
+    #ds = ds.map(serilization, column_names, ds_name, subset_name)
 
+    print(ds)
     # make sure the raw text column named 'text':
-    if config.text_column != 'text':
+    if args.text_column != 'text':
         ds = ds.rename_column(config.text_column, 'text')
+
 
     # Save the dataset into jsonl
     ds.to_json(args.save_path,
