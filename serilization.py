@@ -96,14 +96,26 @@ def main():
     remove_columns=meta_columns)
     #ds = ds.map(serilization, column_names, ds_name, subset_name)
 
-    print(ds)
     # make sure the raw text column named 'text':
     if args.text_column != 'text':
         ds = ds.rename_column(config.text_column, 'text')
 
 
+    if 'validation' in list(ds.column_names.keys()):
+
+        ds['validation'].to_json(f'{args.save_path}ar_{ds_name}_val.json',
+                    lines=True,
+                    force_ascii=False)
+
+    else:
+
+        ds.train_test_split(test_size=0.01)
+        ds['test'].to_json(f'{args.save_path}/ar_{ds_name}_val.json',
+                    lines=True,
+                    force_ascii=False)
+
     # Save the dataset into jsonl
-    ds.to_json(args.save_path,
+    ds['train'].to_json(f'{args.save_path}/ar_{ds_name}.json',
                 lines=True,
                 force_ascii=False)
 
