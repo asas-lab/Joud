@@ -1,5 +1,7 @@
 #!/bin/bash
-
+# run this script using the following command line: 
+# chmod +x ./split_json.sh
+# ./split_json.sh [number_of_lines] [your_data.json] [ar_datasetname_]
 # Check if the correct number of arguments is provided
 if [ "$#" -ne 3 ]; then
     echo "Usage: $0 [NUMBER_OF_LINES] [SOURCE_FILE] [PREFIX]"
