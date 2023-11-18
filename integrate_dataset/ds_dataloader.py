@@ -1,10 +1,19 @@
 """This script test that your dataset has been convert into correct .json.gz format."""
+
+"""
+
+## How to test this script ?
+## run the following lines in jypter or in python script.
+from datasets import load_dataset
+ds = load_dataset('Path-to-ds_dataloader/ds_dataloader.py')
+
+"""
 import gzip
 import json
-
 import datasets
+import glob
 
-import glob 
+name = 'DatasetTet'
 
 logger = datasets.logging.get_logger(name)
 
@@ -16,12 +25,12 @@ _CITATION = """
 
 """
 
-_Path = "/media/khalid/DATA/oscar/tmp/ar_oscar_*.json.gz"
+_Path = "/media/khalid/HDD2/tmp_data_processing/train_gz/ar_hplt_*.json.gz"
 
 
 
 
-class OSCAR(datasets.GeneratorBasedBuilder):
+class DatasetTest(datasets.GeneratorBasedBuilder):
     """"""
 
 
