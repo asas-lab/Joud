@@ -22,7 +22,8 @@ fi
 a=0
 for i in ${PREFIX}*; do 
   if [ -f "$i" ]; then
-    mv "$i" "${PREFIX}$a.jsonl"
+    mv "$i" "${PREFIX}$a.json"
     let a=a+1
   fi
 done
+
