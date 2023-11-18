@@ -1,7 +1,7 @@
 from datasets import load_dataset
 import argparse
 import os
-
+import warnings
 """
 The code serializes the dataset into a specific format comprising of two columns:
 
@@ -39,6 +39,12 @@ def get_args():
         '--save_path',
         type=str,
         help='Indicate the file path where the processed dataset will be saved.'
+    )
+    parser.add_argument(
+        '--large',
+        type=bool,
+        default=False,
+        help='Indicate the Weather the dataset is large (>10GB) or not.'
     )
 
     # Parse the command-line arguments
@@ -101,24 +107,27 @@ def main():
         ds = ds.rename_column(config.text_column, 'text')
 
 
-    if 'validation' in list(ds.column_names.keys()):
+    if not args.large:
+        if 'validation' in list(ds.column_names.keys()):
+            ds['validation'].to_json(f'{args.save_path}/ar_{ds_name}_val.json',
+                        lines=True,
+                        force_ascii=False)
 
-        ds['validation'].to_json(f'{args.save_path}ar_{ds_name}_val.json',
+        else:
+            ds = ds.train_test_split(test_size=0.01)
+            ds['test'].to_json(f'{args.save_path}/ar_{ds_name}_val.json',
+                        lines=True,
+                        force_ascii=False)
+
+        # Save the dataset into jsonl
+        ds['train'].to_json(f'{args.save_path}/ar_{ds_name}.json',
                     lines=True,
                     force_ascii=False)
 
     else:
-
-        ds.train_test_split(test_size=0.01)
-        ds['test'].to_json(f'{args.save_path}/ar_{ds_name}_val.json',
+        ds.to_json(f'{args.save_path}/ar_{ds_name}.json',
                     lines=True,
                     force_ascii=False)
-
-    # Save the dataset into jsonl
-    ds['train'].to_json(f'{args.save_path}/ar_{ds_name}.json',
-                lines=True,
-                force_ascii=False)
-
-
 if __name__ == "__main__":
+    warnings.warn("Please assign --large to True if your dataset is bigger than 10 GB The test_train_split function in huggingface dataset consume large time to save the file in json format if you do spliting to large dataset.")
     main()
