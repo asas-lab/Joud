@@ -69,8 +69,9 @@ def main(argv):
     num_tokens = []
     # Define a function to tokenize an example and return the number of tokens
     def count_tokens(example):
-        tokens = tokenizer(example['text'])['input_ids'][0]
-        num_tokens.append(len(tokens))
+        tokens = tokenizer(example['text'])['input_ids']
+        num_token = [len(i) for i in tokens]
+        num_tokens.append(sum(num_token))
         return example
 
     ds.map(count_tokens)
