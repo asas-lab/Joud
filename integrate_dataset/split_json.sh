@@ -27,3 +27,4 @@ for i in ${PREFIX}*; do
   fi
 done
 
+gzip *.json
