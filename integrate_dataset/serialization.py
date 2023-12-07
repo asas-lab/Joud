@@ -104,7 +104,7 @@ def main():
 
     # make sure the raw text column named 'text':
     if args.text_column != 'text':
-        ds = ds.rename_column(config.text_column, 'text')
+        ds = ds.rename_column(args.text_column, 'text')
 
 
     if not args.large:
@@ -125,7 +125,7 @@ def main():
                     force_ascii=False)
 
     else:
-        ds.to_json(f'{args.save_path}/ar_{ds_name}.json',
+        ds['train'].to_json(f'{args.save_path}/ar_{ds_name}.json',
                     lines=True,
                     force_ascii=False)
 if __name__ == "__main__":
