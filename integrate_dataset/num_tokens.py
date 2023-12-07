@@ -1,13 +1,12 @@
 import argparse, logging
 from datasets import load_dataset
-from tokenizers import ByteLevelBPETokenizer,trainers,pre_tokenizers
-from tokenizers.processors import BertProcessing
-from transformers import AutoConfig
+from tokenizers import ByteLevelBPETokenizer
+from transformers import AutoConfig, AutoTokenizer
 
 def get_args():
     Parser = argparse.ArgumentParser(description="Machine Translation Evalution")
     Parser.add_argument(
-        '--dataset_name',
+        '--ds_name_or_path',
         type=str,
         help = 'the name or path of the model to use in the test.',
         required=True
@@ -16,26 +15,12 @@ def get_args():
         '--subset',
         type=str,
         help = 'the name or path of the subset of the dataset to use in the test',
-        required=True
     )
     Parser.add_argument(
         '--cache_dir',
          type=str,
           help = 'The directory of the cache where the dataset is saved.',
-           required=True
        )
-    Parser.add_argument(
-        '--vocab_size',
-        type=int,
-        default=50265,
-        help ='vocabulary size of the tokenizer'
-    )
-    Parser.add_argument(
-        '--min_freq',
-        type=int,
-        default=2,
-        help ='minimum frequence to a word to be saved in the vocab'
-    )
     Parser.add_argument(
         "--batch_size",
         type=int,
@@ -43,12 +28,7 @@ def get_args():
         help='batch size'
     )
     Parser.add_argument(
-        "--output_path",
-        type=str,
-        help='output path where the tokenizer will be saved'
-    )
-    Parser.add_argument(
-        "--config_name",
+        "--tokenizer_name_or_path",
         type=str,
         help='the name of the model configuration'
     )
@@ -62,8 +42,13 @@ def main(argv):
     tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name_or_path,
                                               use_fast=True,)
 
-    # Load the dataset
-    ds = load_dataset(args.dataset_name,args.subset,split='train', cache_dir=args.cache_dir)
+    ext = args.ds_name_or_path.split('.')[-1]
+
+    if ext in ['json']:
+        # Load the dataset
+        ds= load_dataset(ext, data_files = args.ds_name_or_path, split='train', cache_dir=args.cache_dir)
+    else:
+        ds = load_dataset(args.ds_name_or_path,args.subset,split='train', cache_dir=args.cache_dir)
 
     # Define a function to tokenize an example and return the number of tokens
     num_tokens = []
@@ -74,10 +59,8 @@ def main(argv):
         num_tokens.append(sum(num_token))
         return example
 
-    ds.map(count_tokens)
-
-
-    # Print the number of tokens
+    ds.map(count_tokens, batched=True)
+    # Print the result
     print("The dataset contains", sum(num_tokens), "tokens.")
 
 
