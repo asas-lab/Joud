@@ -1,4 +1,4 @@
-dataset_name="ar_tashkeela_0.json"
+dataset_name="json_file_path"
 
 python num_tokens.py  \
     --tokenizer_name_or_path khalidalt/tokenizer_bpe \
