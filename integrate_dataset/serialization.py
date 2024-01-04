@@ -25,8 +25,9 @@ def get_args():
     )
     parser.add_argument(
         '--text_column',
-        type=str,
-        default='text',
+        #type=str,
+        nargs='+',
+        default=['text'],
         help='Define the column name that contains the raw text.'
     )
     parser.add_argument(
@@ -73,6 +74,19 @@ def serilization(ex,meta_col, ds_name, subset_name):
 
     return ex
 
+
+def serilization_multi_col(ex,text_col,meta_col, ds_name, subset_name):
+
+    meta = {i: ex[i] for i in meta_col}
+    ex['meta'] = meta
+    ex['meta']['dataset_name'] = ds_name
+    if subset_name != None:
+        ex['meta']['subset_name'] = subset_name
+
+    ex['text'] = ', '.join(f"'{i}': '{ex[i]}'" for i in text_col)
+    return ex
+
+
 def main():
 
 
@@ -95,17 +109,30 @@ def main():
         subset_name = args.subset_name
 
     column_names = ds['train'].column_names
-    meta_columns = set(column_names) - set([args.text_column])
 
-    # Call the serilization function with the input dictionary and the loaded dataset
-    ds = ds.map(lambda ex: serilization(ex,meta_columns, ds_name, subset_name),
-    remove_columns=meta_columns)
-    #ds = ds.map(serilization, column_names, ds_name, subset_name)
+    if 'text' in column_names and 'text' not in args.text_column:
+        ds = ds.rename_column('text', 'text1')
+        column_names = ds['train'].column_names
+    meta_columns = set(column_names) - set(args.text_column)
 
-    # make sure the raw text column named 'text':
-    if args.text_column != 'text':
-        ds = ds.rename_column(args.text_column, 'text')
+    if len(args.text_column) <2:
 
+        text_column = args.text_column[0]
+
+
+        # Call the serilization function with the input dictionary and the loaded dataset
+        ds = ds.map(lambda ex: serilization(ex,meta_columns, ds_name, subset_name),
+        remove_columns=meta_columns)
+        #ds = ds.map(serilization, column_names, ds_name, subset_name)
+
+        # make sure the raw text column named 'text':
+        if text_column != 'text':
+            ds = ds.rename_column(text_column, 'text')
+
+
+    else:
+        ds = ds.map(lambda ex: serilization_multi_col(ex,args.text_column,meta_columns, ds_name, subset_name),
+        remove_columns=column_names)
 
     if not args.large:
         if 'validation' in list(ds.column_names.keys()):
