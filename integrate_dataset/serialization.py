@@ -7,6 +7,18 @@ The code serializes the dataset into a specific format comprising of two columns
 
 1. text: This column include the raw text.
 2. meta: This column includes all additional columns, along with the dataset name and subset name (if available).
+
+
+example_to_run:
+
+
+ python serialization.py --dataset_name path_or_name_of_your_dataset --save_path . --text_column column_names
+
+ ## if you have more than one columns that you want to merge in text you can run the following:
+
+ python serialization.py --dataset_name path_or_name_of_your_dataset --save_path . --text_column col1 col2
+
+
 """
 def get_args():
     # Create an argument parser to handle command-line arguments
