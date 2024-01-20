@@ -44,9 +44,14 @@ def main(argv):
 
     ext = args.ds_name_or_path.split('.')[-1]
 
-    if ext in ['json']:
+    if ext in 'json':
         # Load the dataset
         ds= load_dataset(ext, data_files = args.ds_name_or_path, split='train', cache_dir=args.cache_dir)
+
+    elif ext in 'py':
+        
+        ds= load_dataset(args.ds_name_or_path, split='train', cache_dir=args.cache_dir)
+
     else:
         ds = load_dataset(args.ds_name_or_path,args.subset,split='train', cache_dir=args.cache_dir)
 

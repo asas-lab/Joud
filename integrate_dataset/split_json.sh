@@ -2,29 +2,38 @@
 
 # Check if the correct number of arguments is provided
 if [ "$#" -ne 3 ]; then
-    echo "Usage: $0 [NUMBER_OF_LINES] [SOURCE_FILE] [PREFIX]"
+    echo "Usage: $0 [MAX_SIZE_MB] [SOURCE_FILE] [PREFIX]"
     exit 1
 fi
 
-NUMBER_OF_LINES=$1
+MAX_SIZE_MB=$1
 SOURCE_FILE=$2
 PREFIX=$3
+MAX_SIZE_BYTES=$((MAX_SIZE_MB * 1024 * 1024))
 
-# Split the file
-split -l $NUMBER_OF_LINES -d --additional-suffix=.json $SOURCE_FILE ${PREFIX}
+# Function to split the JSON file
+split_json() {
+    local file=$1
+    local prefix=$2
+    local max_size=$3
+    local current_size=0
+    local count=0
+    local out_file="${prefix}${count}.json"
 
-# Rename the first file (if it exists) to remove the leading zero
-if [ -f "${PREFIX}00.json" ]; then
-    mv "${PREFIX}00.json" "${PREFIX}0.json"
-fi
+    while IFS= read -r line; do
+        local size=$(echo "$line" | wc -c)
+        if (( current_size + size > max_size )); then
+            count=$((count + 1))
+            out_file="${prefix}${count}.json"
+            current_size=0
+        fi
+        echo "$line" >> "$out_file"
+        current_size=$((current_size + size))
+    done < "$file"
+}
 
-# Rename the remaining files
-a=0
-for i in ${PREFIX}*; do 
-  if [ -f "$i" ]; then
-    mv "$i" "${PREFIX}$a.json"
-    let a=a+1
-  fi
-done
+# Call the function
+split_json "$SOURCE_FILE" "$PREFIX" "$MAX_SIZE_BYTES"
 
-gzip *.json
+# Compress the files
+gzip ${PREFIX}*.json
