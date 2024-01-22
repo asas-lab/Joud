@@ -46,7 +46,10 @@ python generate_val.py \
     Run the split_json.sh script to divide the JSON file into smaller segments and then compress them:
 
 ```
-./split_json.sh MAX_SIZE source.json prefix_
+python split_json.py  \
+    --source_file file_path_for_json_file \
+    --output_prefix prefix_to_add_in_the_files_name \
+    --split_size the_size_of_each_split_in_MB \
 ```
 
     Set `MAX_SIZE` to "1024" which denotes to the maximum size of each json file.
