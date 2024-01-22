@@ -55,7 +55,12 @@ python generate_val.py \
 
 5. Test the Dataset:
 
-    Validate the dataset by executing the test_ds.py script. If the dataset passes the test successfully, it is ready for upload to HuggingFace. Remember to update the ds_dataloader script by modifying the _Path variable accordingly.
+    Validate the dataset by executing the `test_ds.py` script. If the dataset passes the test successfully, it is ready for upload to HuggingFace. Remember to update the ds_dataloader script by modifying the `_Path` variable accordingly.
+
+  ```
+  python test_ds.py  
+  ```
+
 
 6. Token Count Calculation:
 
