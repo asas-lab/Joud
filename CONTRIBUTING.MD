@@ -10,7 +10,7 @@ Steps to add new datasets to the Joud Huggingface Repository:
 
 1. Initiate or Claim a Pull Request (PR):
 
-    Open a PR to propose the addition of a new dataset to Joud, or claim claim an existing open PR.
+    Open a PR to propose a new dataset to integrate with Joud, or claim claim an existing open PR.
 
 
 2. Convert Dataset to JSON Lines Format:
