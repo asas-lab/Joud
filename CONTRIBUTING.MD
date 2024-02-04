@@ -43,7 +43,7 @@ python generate_val.py \
 
 4. Split and Compress JSON Files:
 
-    Run the split_json.sh script to divide the JSON file into smaller segments and then compress them:
+    Run the split_json.py code to divide the JSON file into smaller segments and then compress them:
 
 ```
 python split_json.py  \
@@ -56,18 +56,10 @@ python split_json.py  \
     The `source.json` parameters determine the json file that will be splited and compressed.
     The `prefix_` denotes to the prefix for each file, e.g., `ar_datasetname_`
 
-5. Test the Dataset:
 
-    Validate the dataset by executing the `test_ds.py` script. If the dataset passes the test successfully, it is ready for upload to HuggingFace. Remember to update the ds_dataloader script by modifying the `_Path` variable accordingly.
+5. Token Count Calculation:
 
-  ```
-  python test_ds.py  
-  ```
-
-
-6. Token Count Calculation:
-
-    Determine the number of tokens in each dataset using the `num_tokens.py` script. This script employs the BPE tokenizer for token calculation. Please report the number of tokens in the PR.
+    Validate the dataset and count the number of tokens in each dataset using the `num_tokens.py` script. This script employs the BPE tokenizer for token calculation. Remember to update the ds_dataloader script by modifying the `_Path` variable accordingly. Please report the number of tokens in the PR.
 
 ```
 python num_tokens.py  \
