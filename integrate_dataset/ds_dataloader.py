@@ -25,7 +25,7 @@ _CITATION = """
 
 """
 
-_Path = "/media/khalid/HDD2/tmp_data_processing/save_joud/ar_wiki_*.json.gz"
+_Path = "/ar_*.json.gz"
 
 
 

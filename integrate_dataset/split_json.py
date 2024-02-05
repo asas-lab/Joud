@@ -44,7 +44,7 @@ def split_jsonl_gzip(source_file, prefix, max_size_mb):
 if __name__ == "__main__":
 
     args = get_args()
-
+    print(args)
     split_jsonl_gzip(source_file = args.source_file,
                     prefix = args.output_prefix,
                     max_size_mb = args.split_size)

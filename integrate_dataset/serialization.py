@@ -42,6 +42,13 @@ def get_args():
         default=['text'],
         help='Define the column name that contains the raw text.'
     )
+
+    parser.add_argument(
+    '--text_in_column',
+    type=str,
+    default=None,
+    help='Define the column name that inside text_column. This used when you have column inside another column.'
+    )
     parser.add_argument(
         '--cache_dir',
         type=str,
@@ -98,6 +105,10 @@ def serilization_multi_col(ex,text_col,meta_col, ds_name, subset_name):
     ex['text'] = ', '.join(f"'{i}': '{ex[i]}'" for i in text_col)
     return ex
 
+def extract_column(ex, col_name):
+    ex.update(ex[col_name])
+    return ex
+
 
 def main():
 
@@ -111,7 +122,7 @@ def main():
                           args.subset_name,
                           data_files=[args.dataset_name],
                           cache_dir=args.cache_dir)
-        ds_name = os.path.splitext(args.dataset_name)[-2]
+        ds_name = os.path.splitext(args.dataset_name)[-2].split('/')[-1]
         subset_name = args.subset_name
     else:
         ds = load_dataset(args.dataset_name,
@@ -120,17 +131,21 @@ def main():
         ds_name = args.dataset_name.split('/')[-1]
         subset_name = args.subset_name
 
+
+    if args.text_in_column:
+        ds = ds.map(lambda ex: extract_column(ex, args.text_in_column), remove_columns=[args.text_in_column])
+
     column_names = ds['train'].column_names
 
-    if 'text' in column_names and 'text' not in args.text_column:
-        ds = ds.rename_column('text', 'text1')
-        column_names = ds['train'].column_names
+
     meta_columns = set(column_names) - set(args.text_column)
+
+
+
 
     if len(args.text_column) <2:
 
         text_column = args.text_column[0]
-
 
         # Call the serilization function with the input dictionary and the loaded dataset
         ds = ds.map(lambda ex: serilization(ex,meta_columns, ds_name, subset_name),
@@ -139,6 +154,7 @@ def main():
 
         # make sure the raw text column named 'text':
         if text_column != 'text':
+            print(text_column)
             ds = ds.rename_column(text_column, 'text')
 
 
