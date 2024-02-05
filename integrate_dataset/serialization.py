@@ -154,7 +154,6 @@ def main():
 
         # make sure the raw text column named 'text':
         if text_column != 'text':
-            print(text_column)
             ds = ds.rename_column(text_column, 'text')
 
 
