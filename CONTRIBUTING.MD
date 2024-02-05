@@ -27,7 +27,7 @@ python serialization.py \
   --large True \
 ```
 
-    The output is a .json file containing two columns: text and meta. The text column contains the raw text, while meta includes all additional columns. For datasets with multiple text columns, list them in the --text_column argument, i.e : `--text_column col1_name col2_name ...`
+The output is a .json file containing two columns: text and meta. The text column contains the raw text, while meta includes all additional columns. For datasets with multiple text columns, list them in the --text_column argument, i.e : `--text_column col1_name col2_name ...`
 
 3. Generate Training and Validation Splits:
 
@@ -52,9 +52,9 @@ python split_json.py  \
     --split_size the_size_of_each_split_in_MB \
 ```
 
-    Set `MAX_SIZE` to "1024" which denotes to the maximum size of each json file.
-    The `source.json` parameters determine the json file that will be splited and compressed.
-    The `prefix_` denotes to the prefix for each file, e.g., `ar_datasetname_`
+Set `MAX_SIZE` to "1024" which denotes to the maximum size of each json file.
+The `source.json` parameters determine the json file that will be splited and compressed.
+The `prefix_` denotes to the prefix for each file, e.g., `ar_datasetname_`
 
 
 5. Token Count Calculation:
